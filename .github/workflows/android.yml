@@ -30,6 +30,9 @@ jobs:
       - name: Instalar dependencias
         run: flutter pub get
 
+      - name: Gerar icones
+        run: dart run flutter_launcher_icons
+
       - name: Gerar APK
         run: flutter build apk --debug
 
