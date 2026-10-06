@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:printing/printing.dart';
+import 'package:share_plus/share_plus.dart';
 
 import 'boleto_parser.dart';
 import 'pdf_service.dart';
@@ -213,7 +214,8 @@ class _HomeScreenState extends State<HomeScreen> {
             context,
             constraints,
           ) {
-            final padding = constraints.maxWidth < 360 ? 14.0 : 20.0;
+            final padding =
+                constraints.maxWidth < 360 ? 14.0 : 20.0;
 
             return Center(
               child: ConstrainedBox(
@@ -230,17 +232,22 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     Text(
                       'Gerar boleto em PDF',
-                      style:
-                          Theme.of(context).textTheme.headlineMedium?.copyWith(
-                                fontWeight: FontWeight.w800,
-                              ),
+                      style: Theme.of(context)
+                          .textTheme
+                          .headlineMedium
+                          ?.copyWith(
+                            fontWeight: FontWeight.w800,
+                          ),
                     ),
                     const SizedBox(
                       height: 10,
                     ),
                     Text(
                       'Cole a linha digitável do boleto bancário para gerar o PDF.',
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyLarge
+                          ?.copyWith(
                             color: const Color(
                               0xFF626775,
                             ),
@@ -269,7 +276,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment:
+                            CrossAxisAlignment.start,
                         children: [
                           Row(
                             children: [
@@ -296,13 +304,17 @@ class _HomeScreenState extends State<HomeScreen> {
                             TextField(
                               controller: controller,
                               focusNode: focusNode,
-                              keyboardType: TextInputType.number,
+                              keyboardType:
+                                  TextInputType.number,
                               maxLines: 1,
-                              decoration: const InputDecoration(
+                              decoration:
+                                  const InputDecoration(
                                 border: InputBorder.none,
-                                hintText: 'Cole o código do boleto',
+                                hintText:
+                                    'Cole o código do boleto',
                                 isDense: true,
-                                contentPadding: EdgeInsets.symmetric(
+                                contentPadding:
+                                    EdgeInsets.symmetric(
                                   vertical: 8,
                                 ),
                               ),
@@ -312,7 +324,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             )
                           else
                             InkWell(
-                              borderRadius: BorderRadius.circular(
+                              borderRadius:
+                                  BorderRadius.circular(
                                 8,
                               ),
                               onTap: () {
@@ -332,18 +345,24 @@ class _HomeScreenState extends State<HomeScreen> {
                               child: SizedBox(
                                 width: double.infinity,
                                 child: Padding(
-                                  padding: const EdgeInsets.symmetric(
+                                  padding:
+                                      const EdgeInsets.symmetric(
                                     vertical: 8,
                                   ),
                                   child: Text(
-                                    controller.text.trim().isEmpty
+                                    controller.text
+                                            .trim()
+                                            .isEmpty
                                         ? 'Cole o código do boleto'
                                         : controller.text,
                                     maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
+                                    overflow:
+                                        TextOverflow.ellipsis,
                                     style: TextStyle(
                                       fontSize: 16,
-                                      color: controller.text.trim().isEmpty
+                                      color: controller.text
+                                              .trim()
+                                              .isEmpty
                                           ? const Color(
                                               0xFF9BA1AD,
                                             )
@@ -364,21 +383,27 @@ class _HomeScreenState extends State<HomeScreen> {
                     SizedBox(
                       height: 54,
                       child: FilledButton(
-                        onPressed: loading ? null : generateBoleto,
-                        child: loading
-                            ? const SizedBox(
-                                width: 20,
-                                height: 20,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
+                        onPressed:
+                            loading
+                                ? null
+                                : generateBoleto,
+                        child:
+                            loading
+                                ? const SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child:
+                                      CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                                : const Text(
+                                  'Gerar boleto',
+                                  style: TextStyle(
+                                    fontWeight:
+                                        FontWeight.bold,
+                                  ),
                                 ),
-                              )
-                            : const Text(
-                                'Gerar boleto',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
                       ),
                     ),
                   ],
@@ -401,7 +426,8 @@ class BoletoScreen extends StatefulWidget {
   final BoletoData boleto;
 
   @override
-  State<BoletoScreen> createState() => _BoletoScreenState();
+  State<BoletoScreen> createState() =>
+      _BoletoScreenState();
 }
 
 class _BoletoScreenState extends State<BoletoScreen> {
@@ -464,9 +490,19 @@ class _BoletoScreenState extends State<BoletoScreen> {
     try {
       final bytes = await pdfFuture;
 
-      await Printing.sharePdf(
-        bytes: bytes,
-        filename: 'boleto.pdf',
+      final arquivo = XFile.fromData(
+        bytes,
+        mimeType: 'application/pdf',
+        name: 'boleto.pdf',
+      );
+
+      await Share.shareXFiles(
+        [
+          arquivo,
+        ],
+        fileNameOverrides: const [
+          'boleto.pdf',
+        ],
       );
     } catch (_) {
       if (mounted) {
@@ -565,26 +601,33 @@ class _BoletoScreenState extends State<BoletoScreen> {
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
+              crossAxisAlignment:
+                  CrossAxisAlignment.stretch,
               children: [
                 SizedBox(
                   height: 52,
                   child: FilledButton(
-                    onPressed: salvando ? null : salvarPdf,
-                    child: salvando
-                        ? const SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
+                    onPressed:
+                        salvando
+                            ? null
+                            : salvarPdf,
+                    child:
+                        salvando
+                            ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child:
+                                  CircularProgressIndicator(
+                                strokeWidth: 2,
+                              ),
+                            )
+                            : const Text(
+                              'Salvar',
+                              style: TextStyle(
+                                fontWeight:
+                                    FontWeight.bold,
+                              ),
                             ),
-                          )
-                        : const Text(
-                            'Salvar',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
                   ),
                 ),
                 const SizedBox(
@@ -593,21 +636,27 @@ class _BoletoScreenState extends State<BoletoScreen> {
                 SizedBox(
                   height: 52,
                   child: FilledButton(
-                    onPressed: encaminhando ? null : encaminharPdf,
-                    child: encaminhando
-                        ? const SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
+                    onPressed:
+                        encaminhando
+                            ? null
+                            : encaminharPdf,
+                    child:
+                        encaminhando
+                            ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child:
+                                  CircularProgressIndicator(
+                                strokeWidth: 2,
+                              ),
+                            )
+                            : const Text(
+                              'Encaminhar',
+                              style: TextStyle(
+                                fontWeight:
+                                    FontWeight.bold,
+                              ),
                             ),
-                          )
-                        : const Text(
-                            'Encaminhar',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
                   ),
                 ),
               ],
@@ -627,14 +676,14 @@ String formatDate(
   }
 
   final dia = data.day.toString().padLeft(
-        2,
-        '0',
-      );
+    2,
+    '0',
+  );
 
   final mes = data.month.toString().padLeft(
-        2,
-        '0',
-      );
+    2,
+    '0',
+  );
 
   return '$dia/$mes/${data.year}';
 }
