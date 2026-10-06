@@ -500,9 +500,6 @@ class _BoletoScreenState extends State<BoletoScreen> {
         [
           arquivo,
         ],
-        fileNameOverrides: const [
-          'boleto.pdf',
-        ],
       );
     } catch (_) {
       if (mounted) {
